@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from core.config import settings
-from core.exceptions.exception_handlers import register_exception_handlers
+from src.core.config import settings
+from src.core.exceptions.exception_handlers import register_exception_handlers
 
 app = FastAPI()
 
