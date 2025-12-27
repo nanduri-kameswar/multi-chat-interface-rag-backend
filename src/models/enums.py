@@ -10,3 +10,10 @@ class MessageRole(str, enum.Enum):
     SYSTEM = "system"
     ASSISTANT = "assistant"
     USER = "user"
+
+
+class DocumentStatus(str, enum.Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    READY = "ready"
+    FAILED = "failed"

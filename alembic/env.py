@@ -9,6 +9,8 @@ from alembic import context
 from src.core.config import settings
 from src.db.connection import Base
 from src.models.conversation_model import Conversation
+from src.models.document_chunk_model import DocumentChunk
+from src.models.document_model import Document
 from src.models.message_model import Message
 from src.models.user_model import User
 from src.models.user_session_model import UserSession
