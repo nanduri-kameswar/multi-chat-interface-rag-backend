@@ -14,8 +14,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 def main():
     return {"message": "Hello World"}
+
 
 register_exception_handlers(app)
