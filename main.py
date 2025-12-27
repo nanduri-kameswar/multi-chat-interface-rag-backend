@@ -3,7 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.config import settings
 from src.core.exceptions.exception_handlers import register_exception_handlers
-from src.routers import conversation_router, message_router, user_router
+from src.routers import (conversation_router, document_router, message_router,
+                         user_router)
 
 app = FastAPI()
 
@@ -23,6 +24,7 @@ register_exception_handlers(app)
 app.include_router(user_router.router)
 app.include_router(conversation_router.router)
 app.include_router(message_router.router)
+app.include_router(document_router.router)
 
 
 # home routers
