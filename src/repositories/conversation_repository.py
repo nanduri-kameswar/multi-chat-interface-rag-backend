@@ -1,10 +1,11 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.exceptions.exceptions import ForbiddenError, NotFoundError
+from src.core.exceptions.exceptions import (ConflictError, ForbiddenError,
+                                            NotFoundError)
 from src.models import Conversation
 from src.schemas.conversation_schema import ConversationUpdate
 
@@ -14,6 +15,19 @@ class ConversationRepository:
         self.db = db
 
     async def create_conversation(self, conversation: Conversation) -> Conversation:
+        result = await self.db.execute(
+            select(Conversation).where(
+                and_(
+                    Conversation.user_id == conversation.user_id,
+                    Conversation.title == conversation.title,
+                )
+            )
+        )
+        matching_convo: Conversation | None = result.scalar_one_or_none()
+        if matching_convo:
+            raise ConflictError(
+                "Document with same name already exists in the conversation"
+            )
         self.db.add(conversation)
         await self.db.commit()
         await self.db.refresh(conversation)
@@ -23,13 +37,15 @@ class ConversationRepository:
         self, conversation_id: uuid.UUID, user_id: uuid.UUID
     ) -> Conversation:
         result = await self.db.execute(
-            select(Conversation).filter(Conversation.id == conversation_id)
+            select(Conversation).where(
+                and_(
+                    Conversation.id == conversation_id, Conversation.user_id == user_id
+                )
+            )
         )
         conversation: Conversation | None = result.scalar_one_or_none()
         if not conversation:
             raise NotFoundError("Conversation not found")
-        if conversation.user_id != user_id:
-            raise ForbiddenError("Access denied")
         return conversation
 
     async def get_all_conversations(self, user_id: uuid.UUID) -> list[Conversation]:
@@ -47,6 +63,19 @@ class ConversationRepository:
         conversation_id: uuid.UUID,
         user_id: uuid.UUID,
     ) -> Conversation:
+        result = await self.db.execute(
+            select(Conversation).where(
+                and_(
+                    Conversation.user_id == user_id,
+                    Conversation.title == updated_conversation.title,
+                )
+            )
+        )
+        matching_convo_title: Conversation | None = result.scalar_one_or_none()
+        if matching_convo_title:
+            raise ConflictError(
+                "Document with same name already exists in the conversation"
+            )
         db_conversation = await self.get_conversation(conversation_id, user_id)
         db_conversation.title = updated_conversation.title
         db_conversation.updated_at = datetime.now(timezone.utc)
@@ -61,8 +90,6 @@ class ConversationRepository:
         )
         if not conversation:
             raise NotFoundError("Conversation not found")
-        if conversation.user_id != user_id:
-            raise ForbiddenError("Access denied")
         await self.db.delete(conversation)
         await self.db.commit()
         return conversation
