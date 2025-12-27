@@ -4,6 +4,7 @@ from fastapi import Depends
 
 from src.db.db_deps import AsyncDb_Dependency
 from src.services.conversation_service import ConversationService
+from src.services.message_service import MessageService
 from src.services.user_service import UserService
 
 
@@ -25,4 +26,15 @@ def get_conversation_service(db: AsyncDb_Dependency) -> ConversationService:
 
 ConversationService_Dependency: TypeAlias = Annotated[
     ConversationService, Depends(get_conversation_service)
+]
+
+
+# message service dependency
+def get_message_service(db: AsyncDb_Dependency) -> MessageService:
+    return MessageService(db)
+
+
+MessageService_Dependency: TypeAlias = Annotated[
+    MessageService,
+    Depends(get_message_service),
 ]

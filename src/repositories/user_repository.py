@@ -3,12 +3,10 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.auth_passlib import create_hashed_password, verify_hashed_password
-from src.core.exceptions.exceptions import (
-    ConflictError,
-    CredentialsError,
-    NotFoundError,
-)
+from src.auth.auth_passlib import (create_hashed_password,
+                                   verify_hashed_password)
+from src.core.exceptions.exceptions import (ConflictError, CredentialsError,
+                                            NotFoundError)
 from src.models.user_model import User
 
 

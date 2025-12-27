@@ -1,17 +1,13 @@
-from typing import Annotated, TypeAlias
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from src.auth.auth_deps import CurrentUser_Dependency
-from src.db.db_deps import AsyncDb_Dependency
-from src.routers.routers_deps import ConversationService_Dependency
-from src.schemas.conversation_schema import (
-    ConversationCreate,
-    ConversationResponse,
-    ConversationUpdate,
-)
-from src.services.conversation_service import ConversationService
+from src.schemas.conversation_schema import (ConversationCreate,
+                                             ConversationResponse,
+                                             ConversationUpdate)
+
+from .routers_deps import ConversationService_Dependency
 
 router = APIRouter(prefix="/conversation", tags=["conversation"])
 

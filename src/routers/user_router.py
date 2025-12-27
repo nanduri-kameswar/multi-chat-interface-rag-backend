@@ -4,11 +4,8 @@ from fastapi import APIRouter, Request, Response
 
 from src.auth.auth_deps import CurrentUser_Dependency, OAuth2Form_Dependency
 from src.auth.auth_models import JwtPayload
-from src.core.exceptions.exceptions import (
-    CredentialsError,
-    ForbiddenError,
-    NotFoundError,
-)
+from src.core.exceptions.exceptions import (CredentialsError, ForbiddenError,
+                                            NotFoundError)
 from src.models.user_model import User
 from src.models.user_session_model import UserSession as UserSession
 from src.schemas.user_schema import UserCreate, UserResponse, UserUpdate
