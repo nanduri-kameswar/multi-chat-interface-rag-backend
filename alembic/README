@@ -1,0 +1,5 @@
+pyproject configuration, with an async dbapi.
+
+```bash
+alembic init pyproject_async alembic
+```
