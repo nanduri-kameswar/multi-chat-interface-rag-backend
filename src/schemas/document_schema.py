@@ -9,6 +9,7 @@ from src.schemas.base_schema import ORMBase
 class DocumentCreate(BaseModel):
     file_name: str
     conversation_id: uuid.UUID
+    text: str
 
 
 class DocumentResponse(ORMBase):

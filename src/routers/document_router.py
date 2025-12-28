@@ -1,11 +1,11 @@
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks, status
 
 from src.auth.auth_deps import CurrentUser_Dependency
-from src.models.enums import DocumentStatus
 from src.schemas.document_schema import DocumentCreate, DocumentResponse
 
+from ..schemas.document_chunk_schema import DocumentChunkResponse
 from .routers_deps import DocumentService_Dependency
 
 router = APIRouter(
@@ -14,14 +14,21 @@ router = APIRouter(
 )
 
 
-@router.post("/create", response_model=DocumentResponse)
+@router.post(
+    "/create", response_model=DocumentResponse, status_code=status.HTTP_202_ACCEPTED
+)
 async def create_document(
     payload: DocumentCreate,
     jwt: CurrentUser_Dependency,
     service: DocumentService_Dependency,
+    background_tasks: BackgroundTasks,
 ):
     return await service.create_document(
-        payload.file_name, payload.conversation_id, UUID(jwt.get("user_id"))
+        payload.file_name,
+        payload.conversation_id,
+        payload.text,
+        UUID(jwt.get("user_id")),
+        background_tasks,
     )
 
 
@@ -50,20 +57,17 @@ async def get_all_conversation_documents(
     )
 
 
-@router.put("/update-status/{document_id}")
-async def modify_document_status(
-    document_id: UUID,
-    status: DocumentStatus,
-    jwt: CurrentUser_Dependency,
-    service: DocumentService_Dependency,
-):
-    return await service.modify_document_status(
-        UUID(jwt.get("user_id")), document_id, status
-    )
-
-
 @router.delete("/delete/{document_id}")
 async def delete_document(
     document_id: UUID, jwt: CurrentUser_Dependency, service: DocumentService_Dependency
 ):
     return await service.delete_document(UUID(jwt.get("user_id")), document_id)
+
+
+@router.get(
+    "/chunks/read-all/{document_id}", response_model=list[DocumentChunkResponse]
+)
+async def get_all_document_chunks(
+    document_id: UUID, jwt: CurrentUser_Dependency, service: DocumentService_Dependency
+):
+    return await service.get_all_document_chunks(UUID(jwt.get("user_id")), document_id)

@@ -49,14 +49,14 @@ class DocumentRepository:
                 and_(Document.conversation_id == convo_id, Document.user_id == user_id)
             )
         )
-        documents: list[Document] = list(result.scalars())
+        documents: list[Document] = result.scalars().all()
         return documents
 
     async def get_all_user_documents(self, user_id: uuid.UUID) -> list[Document]:
         result = await self.db.execute(
             select(Document).where(Document.user_id == user_id)
         )
-        documents: list[Document] = list(result.scalars())
+        documents: list[Document] = result.scalars().all()
         return documents
 
     async def delete_document(self, user_id: uuid.UUID, doc_id: uuid.UUID) -> None:

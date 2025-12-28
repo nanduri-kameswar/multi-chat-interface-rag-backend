@@ -11,15 +11,16 @@ class DocumentChunkRepository:
         self.db = db
 
     async def create_document_chunks(self, chunks: list[DocumentChunk]):
-        self.db.add(chunks)
+        self.db.add_all(chunks)
         await self.db.commit()
-        await self.db.refresh(chunks)
+        for chunk in chunks:
+            await self.db.refresh(chunk)
 
     async def get_all_document_chunks(
         self, document_id: uuid.UUID
     ) -> list[DocumentChunk]:
         result = await self.db.execute(
-            select(DocumentChunk).where(DocumentChunk.id == document_id)
+            select(DocumentChunk).where(DocumentChunk.document_id == document_id)
         )
-        document_chunks: list[DocumentChunk] = list(result.scalars())
+        document_chunks: list[DocumentChunk] = result.scalars().all()
         return document_chunks

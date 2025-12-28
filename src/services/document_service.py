@@ -1,14 +1,17 @@
 import uuid
 
+from fastapi import BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.exceptions.exceptions import NotFoundError
+from src.core.exceptions.exceptions import NotFoundError, ProcessingFailedError
+from src.embeddings.factory import get_embedding_provider
 from src.models.document_chunk_model import DocumentChunk
 from src.models.document_model import Document
 from src.models.enums import DocumentStatus
 from src.repositories.document_chunk_repository import DocumentChunkRepository
 from src.repositories.document_repository import DocumentRepository
 from src.services.conversation_service import ConversationService
+from src.utilities.document_utility import create_chunks_from
 
 
 class DocumentService:
@@ -16,9 +19,15 @@ class DocumentService:
         self.repo = DocumentRepository(db)
         self.chunk_repo = DocumentChunkRepository(db)
         self.conversation_service = ConversationService(db)
+        self.embedder = get_embedding_provider()
 
     async def create_document(
-        self, file_name: str, conversation_id: uuid.UUID, user_id: uuid.UUID
+        self,
+        file_name: str,
+        conversation_id: uuid.UUID,
+        text: str,
+        user_id: uuid.UUID,
+        background_tasks: BackgroundTasks,
     ) -> Document:
         conversation_result = await self.conversation_service.get_conversation(
             conversation_id, user_id
@@ -31,7 +40,11 @@ class DocumentService:
             file_name=file_name,
             status=DocumentStatus.PENDING,
         )
-        return await self.repo.create_document(document)
+        db_document = await self.repo.create_document(document)
+        background_tasks.add_task(
+            self.create_document_chunks, user_id, db_document.id, text
+        )
+        return db_document
 
     async def get_document(self, user_id: uuid.UUID, doc_id: uuid.UUID) -> Document:
         return await self.repo.get_document(user_id, doc_id)
@@ -56,12 +69,26 @@ class DocumentService:
     ) -> None:
         await self.repo.modify_document_status(user_id, doc_id, status)
 
-    async def create_document_chunks(self, doc_id: uuid.UUID, chunks: list[str]):
-        chunk_objs = [
-            DocumentChunk(document_id=doc_id, content=chunk, embedding=[])
-            for chunk in chunks
-        ]
-        await self.chunk_repo.create_document_chunks(chunk_objs)
+    async def create_document_chunks(
+        self, user_id: uuid.UUID, doc_id: uuid.UUID, text: str
+    ):
+        await self.modify_document_status(user_id, doc_id, DocumentStatus.PROCESSING)
+        try:
+            text_chunks: list[str] = create_chunks_from(text)
+            embeddings = self.embedder().embed(text_chunks)
+            chunk_objs = [
+                DocumentChunk(document_id=doc_id, content=text, embedding=vector)
+                for text, vector in zip(text_chunks, embeddings)
+            ]
+            await self.chunk_repo.create_document_chunks(chunk_objs)
+            await self.modify_document_status(user_id, doc_id, DocumentStatus.READY)
+        except Exception as e:
+            await self.modify_document_status(user_id, doc_id, DocumentStatus.FAILED)
+            raise ProcessingFailedError(str(e))
 
-    async def get_all_document_chunks(self, doc_id: uuid.UUID) -> list[DocumentChunk]:
+    async def get_all_document_chunks(
+        self, user_id: uuid.UUID, doc_id: uuid.UUID
+    ) -> list[DocumentChunk]:
+        # check this user can access this document or not
+        await self.get_document(user_id, doc_id)
         return await self.chunk_repo.get_all_document_chunks(doc_id)
