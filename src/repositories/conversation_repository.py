@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.exceptions.exceptions import (ConflictError, ForbiddenError,
+from src.core.exceptions.exceptions import (ConflictError,
                                             NotFoundError)
 from src.models import Conversation
 from src.schemas.conversation_schema import ConversationUpdate
@@ -54,7 +54,7 @@ class ConversationRepository:
             .filter(Conversation.user_id == user_id)
             .order_by(Conversation.updated_at.desc())
         )
-        conversations: list[Conversation] = list(result.scalars().all())
+        conversations: list[Conversation] = result.scalars().all()
         return conversations
 
     async def update_conversation(

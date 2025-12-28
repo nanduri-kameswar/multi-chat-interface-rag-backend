@@ -1,5 +1,4 @@
 import uuid
-from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,7 +20,7 @@ class ConversationService:
     ) -> Conversation:
         return await self.repo.get_conversation(conversation_id, user_id)
 
-    async def get_all_conversations(self, user_id: uuid.UUID) -> List[Conversation]:
+    async def get_all_conversations(self, user_id: uuid.UUID) -> list[Conversation]:
         return await self.repo.get_all_conversations(user_id)
 
     async def update_conversation(

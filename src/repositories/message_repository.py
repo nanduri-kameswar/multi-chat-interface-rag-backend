@@ -29,5 +29,5 @@ class MessageRepository:
             .filter(Message.conversation_id == convo_id)
             .order_by(Message.created_at)
         )
-        messages: list[Message] = list(result.scalars())
+        messages: list[Message] = result.scalars().all()
         return messages
