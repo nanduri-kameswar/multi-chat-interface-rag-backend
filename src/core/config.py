@@ -29,6 +29,8 @@ class AppSettings(BaseSettings):
     DB_NAME: str = ""
     DB_HOST: str = ""
     DB_PORT: str = ""
+    EMBEDDING_PROVIDER: str = "local"
+    GEMINI_API_KEY: str = ""
 
     # CORS
     ALLOWED_ORIGINS: Union[str, List[str]] = Field(default=["*"])
