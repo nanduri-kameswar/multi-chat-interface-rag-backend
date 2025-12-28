@@ -6,7 +6,9 @@ from src.core.exceptions.exception_handlers import register_exception_handlers
 from src.routers import (conversation_router, document_router, message_router,
                          user_router)
 
-app = FastAPI()
+app = FastAPI(
+    prefix=settings.API_PREFIX,
+)
 
 # Added CORS middleware
 app.add_middleware(
