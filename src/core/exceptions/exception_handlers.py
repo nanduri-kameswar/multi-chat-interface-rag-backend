@@ -1,7 +1,8 @@
 from fastapi.responses import JSONResponse
 
 from src.core.exceptions.exceptions import (ConflictError, CredentialsError,
-                                            ForbiddenError, NotFoundError)
+                                            ForbiddenError, NotFoundError,
+                                            ProcessingFailedError)
 
 
 def register_exception_handlers(app):
@@ -34,6 +35,15 @@ def register_exception_handlers(app):
 
     @app.exception_handler(CredentialsError)
     def credentials(_, exc: CredentialsError):
+        return JSONResponse(
+            status_code=401,
+            content={
+                "detail": exc.message,
+            },
+        )
+
+    @app.exception_handler(ProcessingFailedError)
+    def credentials(_, exc: ProcessingFailedError):
         return JSONResponse(
             status_code=401,
             content={

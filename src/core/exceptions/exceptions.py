@@ -21,3 +21,8 @@ class ConflictError(Exception):
 class CredentialsError(Exception):
     def __init__(self, message: str):
         self.message = message
+
+
+class ProcessingFailedError(Exception):
+    def __init__(self, message: str):
+        self.message = message
