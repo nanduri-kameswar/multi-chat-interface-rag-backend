@@ -1,9 +1,13 @@
 from fastapi.responses import JSONResponse
 
-from src.core.exceptions.exceptions import (ConflictError, CredentialsError,
-                                            ForbiddenError, NotFoundError,
-                                            ProcessingFailedError,
-                                            UnsupportedFileTypeError)
+from src.core.exceptions.exceptions import (
+    ConflictError,
+    CredentialsError,
+    ForbiddenError,
+    NotFoundError,
+    ProcessingFailedError,
+    UnsupportedFileTypeError,
+)
 
 
 def register_exception_handlers(app):

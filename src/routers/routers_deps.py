@@ -42,7 +42,9 @@ MessageService_Dependency: TypeAlias = Annotated[
 
 
 # document service dependency
-def get_document_service(db: AsyncDb_Dependency, vector_store: PGVectorStore_Dependency) -> DocumentService:
+def get_document_service(
+    db: AsyncDb_Dependency, vector_store: PGVectorStore_Dependency
+) -> DocumentService:
     return DocumentService(db, vector_store)
 
 

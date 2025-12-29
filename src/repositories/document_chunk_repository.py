@@ -30,14 +30,16 @@ class DocumentChunkRepository:
     """
 
     async def similarity_search(
-        self, text: str, user_id: uuid.UUID, conversation_id: uuid.UUID, document_id: uuid.UUID
+        self,
+        text: str,
+        user_id: uuid.UUID,
+        conversation_id: uuid.UUID,
+        document_id: uuid.UUID,
     ) -> list[Document]:
         docs = await self.vector_store.asimilarity_search(
             text,
             k=settings.SIMILARITY_SEARCH_K,
-            filter={
-                "document_id": str(document_id)
-            },
+            filter={"document_id": str(document_id)},
         )
         return docs
 

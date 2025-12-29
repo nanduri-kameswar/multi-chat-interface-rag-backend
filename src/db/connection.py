@@ -16,12 +16,16 @@ AsyncSessionLocal = async_sessionmaker(
     bind=engine, expire_on_commit=False, autocommit=False, autoflush=False
 )
 
+
 class Base(DeclarativeBase):
     pass
+
 
 """
 Initialize pg vector store
 """
+
+
 @asynccontextmanager
 async def init_vector_store() -> AsyncGenerator[PGVectorStore, None]:
     index = HNSWIndex("hnsw-index")

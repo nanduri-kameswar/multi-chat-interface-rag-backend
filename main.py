@@ -6,8 +6,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.core.config import settings
 from src.core.exceptions.exception_handlers import register_exception_handlers
 from src.db.connection import init_vector_store
-from src.routers import (conversation_router, document_router, message_router,
-                         user_router)
+from src.routers import (
+    conversation_router,
+    document_router,
+    message_router,
+    user_router,
+)
+
 
 @asynccontextmanager
 async def lifespan(app_name: FastAPI):

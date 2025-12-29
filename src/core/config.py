@@ -4,8 +4,7 @@ from typing import List, Union
 from pydantic import Field, computed_field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from src.core.env_enums import (LangChainEmbeddingType,
-                                LangChainTextSplitterType)
+from src.core.env_enums import LangChainEmbeddingType, LangChainTextSplitterType
 
 # ----------------------------
 # APP SETTINGS

@@ -3,8 +3,7 @@ import uuid
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.exceptions.exceptions import (ConflictError, ForbiddenError,
-                                            NotFoundError)
+from src.core.exceptions.exceptions import ConflictError, ForbiddenError, NotFoundError
 from src.models.document_model import Document
 from src.models.enums import DocumentStatus
 

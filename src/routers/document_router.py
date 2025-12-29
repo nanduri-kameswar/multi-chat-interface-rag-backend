@@ -79,7 +79,7 @@ async def get_similar_document_chunks(
     convo_id: UUID,
     document_id: UUID,
     jwt: CurrentUser_Dependency,
-    service: DocumentService_Dependency
+    service: DocumentService_Dependency,
 ):
     return await service.get_similar_document_chunks(
         text, UUID(jwt.get("user_id")), convo_id, document_id

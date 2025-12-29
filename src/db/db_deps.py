@@ -18,4 +18,7 @@ AsyncDb_Dependency: TypeAlias = Annotated[AsyncSession, Depends(get_db)]
 async def get_vector_store(request: Request) -> PGVectorStore:
     return request.app.state.vector_store
 
-PGVectorStore_Dependency: TypeAlias = Annotated[PGVectorStore, Depends(get_vector_store)]
+
+PGVectorStore_Dependency: TypeAlias = Annotated[
+    PGVectorStore, Depends(get_vector_store)
+]

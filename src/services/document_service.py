@@ -131,6 +131,15 @@ class DocumentService:
     async def get_similar_document_chunks(
         self, text: str, user_id: uuid.UUID, convo_id: uuid.UUID, document_id: uuid.UUID
     ) -> list[DocumentChunkResponse]:
-        docs = await self.chunk_repo.similarity_search(text, user_id, convo_id, document_id)
-        doc_response = [DocumentChunkResponse(id=uuid.UUID(doc.id), content=doc.page_content, source=doc.metadata.get("source", None)) for doc in docs]
+        docs = await self.chunk_repo.similarity_search(
+            text, user_id, convo_id, document_id
+        )
+        doc_response = [
+            DocumentChunkResponse(
+                id=uuid.UUID(doc.id),
+                content=doc.page_content,
+                source=doc.metadata.get("source", None),
+            )
+            for doc in docs
+        ]
         return doc_response

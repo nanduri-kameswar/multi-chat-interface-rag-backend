@@ -3,9 +3,11 @@ from uuid import UUID
 from fastapi import APIRouter
 
 from src.auth.auth_deps import CurrentUser_Dependency
-from src.schemas.conversation_schema import (ConversationCreate,
-                                             ConversationResponse,
-                                             ConversationUpdate)
+from src.schemas.conversation_schema import (
+    ConversationCreate,
+    ConversationResponse,
+    ConversationUpdate,
+)
 
 from .routers_deps import ConversationService_Dependency
 
