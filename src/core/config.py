@@ -4,6 +4,9 @@ from typing import List, Union
 from pydantic import Field, computed_field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from src.core.env_enums import (LangChainEmbeddingType,
+                                LangChainTextSplitterType)
+
 # ----------------------------
 # APP SETTINGS
 # ----------------------------
@@ -23,13 +26,22 @@ class AppSettings(BaseSettings):
 
     # Database
     DATABASE_TEMPLATE_URL: str | None = None
-    VECTOR_SIZE: int = 1536
     DB_USER: str = ""
     DB_PASSWORD: str = ""
     DB_NAME: str = ""
     DB_HOST: str = ""
     DB_PORT: str = ""
-    EMBEDDING_PROVIDER: str = "local"
+
+    # Vector DB Configs
+    VECTOR_SIZE: int = 1536
+    EMBEDDING_PROVIDER: LangChainEmbeddingType = LangChainEmbeddingType.GEMINI
+    TEXT_SPLITTER: LangChainTextSplitterType = LangChainTextSplitterType.RECURSIVE
+    CHUNK_SIZE: int = 1000
+    CHUNK_OVERLAP: int = 200
+    SIMILARITY_SEARCH_K: int = 20
+    OLLAMA_LOCALHOST: str | None = None
+
+    # API Keys
     GEMINI_API_KEY: str = ""
 
     # CORS
