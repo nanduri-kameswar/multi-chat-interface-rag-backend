@@ -2,7 +2,8 @@ from fastapi.responses import JSONResponse
 
 from src.core.exceptions.exceptions import (ConflictError, CredentialsError,
                                             ForbiddenError, NotFoundError,
-                                            ProcessingFailedError)
+                                            ProcessingFailedError,
+                                            UnsupportedFileTypeError)
 
 
 def register_exception_handlers(app):
@@ -44,6 +45,15 @@ def register_exception_handlers(app):
 
     @app.exception_handler(ProcessingFailedError)
     def credentials(_, exc: ProcessingFailedError):
+        return JSONResponse(
+            status_code=401,
+            content={
+                "detail": exc.message,
+            },
+        )
+
+    @app.exception_handler(UnsupportedFileTypeError)
+    def credentials(_, exc: UnsupportedFileTypeError):
         return JSONResponse(
             status_code=401,
             content={

@@ -26,3 +26,8 @@ class CredentialsError(Exception):
 class ProcessingFailedError(Exception):
     def __init__(self, message: str):
         self.message = message
+
+
+class UnsupportedFileTypeError(Exception):
+    def __init__(self, message: str):
+        self.message = message
