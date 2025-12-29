@@ -1,8 +1,9 @@
 import uuid
+from typing import Any
 
 from pgvector.sqlalchemy import VECTOR
 from sqlalchemy import ForeignKey, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.config import settings
@@ -23,5 +24,7 @@ class DocumentChunk(Base):
     embedding: Mapped[list[float]] = mapped_column(
         VECTOR(settings.VECTOR_SIZE), nullable=False, default=[]
     )
+
+    cmetadata: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
 
     document = relationship("Document", back_populates="chunks")
