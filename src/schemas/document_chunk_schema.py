@@ -7,3 +7,4 @@ class DocumentChunkResponse(ORMBase):
     id: uuid.UUID
     content: str
     source: str
+    page: int

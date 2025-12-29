@@ -139,6 +139,7 @@ class DocumentService:
                 id=uuid.UUID(doc.id),
                 content=doc.page_content,
                 source=doc.metadata.get("source", None),
+                page=doc.metadata.get("page", None),
             )
             for doc in docs
         ]
