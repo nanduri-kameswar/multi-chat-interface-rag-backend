@@ -2,7 +2,7 @@ from typing import Annotated, TypeAlias
 
 from fastapi import Depends
 
-from src.db.db_deps import AsyncDb_Dependency
+from src.db.db_deps import AsyncDb_Dependency, PGVectorStore_Dependency
 from src.services.conversation_service import ConversationService
 from src.services.document_service import DocumentService
 from src.services.message_service import MessageService
@@ -42,8 +42,8 @@ MessageService_Dependency: TypeAlias = Annotated[
 
 
 # document service dependency
-def get_document_service(db: AsyncDb_Dependency) -> DocumentService:
-    return DocumentService(db)
+def get_document_service(db: AsyncDb_Dependency, vector_store: PGVectorStore_Dependency) -> DocumentService:
+    return DocumentService(db, vector_store)
 
 
 DocumentService_Dependency: TypeAlias = Annotated[

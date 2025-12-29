@@ -1,9 +1,9 @@
 from uuid import UUID
 
-from fastapi import APIRouter, BackgroundTasks, status
+from fastapi import APIRouter, BackgroundTasks, UploadFile, status
 
 from src.auth.auth_deps import CurrentUser_Dependency
-from src.schemas.document_schema import DocumentCreate, DocumentResponse
+from src.schemas.document_schema import DocumentResponse
 
 from ..schemas.document_chunk_schema import DocumentChunkResponse
 from .routers_deps import DocumentService_Dependency
@@ -15,18 +15,18 @@ router = APIRouter(
 
 
 @router.post(
-    "/create", response_model=DocumentResponse, status_code=status.HTTP_202_ACCEPTED
+    "/upload", response_model=DocumentResponse, status_code=status.HTTP_202_ACCEPTED
 )
-async def create_document(
-    payload: DocumentCreate,
+async def upload_pdf(
+    file: UploadFile,
+    convo_id: UUID,
     jwt: CurrentUser_Dependency,
     service: DocumentService_Dependency,
     background_tasks: BackgroundTasks,
 ):
     return await service.create_document(
-        payload.file_name,
-        payload.conversation_id,
-        payload.text,
+        file,
+        convo_id,
         UUID(jwt.get("user_id")),
         background_tasks,
     )
@@ -71,3 +71,16 @@ async def get_all_document_chunks(
     document_id: UUID, jwt: CurrentUser_Dependency, service: DocumentService_Dependency
 ):
     return await service.get_all_document_chunks(UUID(jwt.get("user_id")), document_id)
+
+
+@router.get("/chunks/similar/{text}", response_model=list[DocumentChunkResponse])
+async def get_similar_document_chunks(
+    text: str,
+    convo_id: UUID,
+    document_id: UUID,
+    jwt: CurrentUser_Dependency,
+    service: DocumentService_Dependency
+):
+    return await service.get_similar_document_chunks(
+        text, UUID(jwt.get("user_id")), convo_id, document_id
+    )

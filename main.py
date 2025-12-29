@@ -1,13 +1,24 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.config import settings
 from src.core.exceptions.exception_handlers import register_exception_handlers
+from src.db.connection import init_vector_store
 from src.routers import (conversation_router, document_router, message_router,
                          user_router)
 
+@asynccontextmanager
+async def lifespan(app_name: FastAPI):
+    async with init_vector_store() as vector_store:
+        app.state.vector_store = vector_store
+        yield
+
+
 app = FastAPI(
     prefix=settings.API_PREFIX,
+    lifespan=lifespan,
 )
 
 # Added CORS middleware
