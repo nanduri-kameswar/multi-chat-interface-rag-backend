@@ -4,7 +4,7 @@ from typing import List, Union
 from pydantic import Field, computed_field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from src.core.env_enums import LangChainEmbeddingType, LangChainTextSplitterType
+from src.core.env_enums import LangChainProviderType, LangChainTextSplitterType
 
 # ----------------------------
 # APP SETTINGS
@@ -33,7 +33,7 @@ class AppSettings(BaseSettings):
 
     # Vector DB Configs
     VECTOR_SIZE: int = 1536
-    EMBEDDING_PROVIDER: LangChainEmbeddingType = LangChainEmbeddingType.GEMINI
+    LANGCHAIN_PROVIDER: LangChainProviderType = LangChainProviderType.GEMINI
     TEXT_SPLITTER: LangChainTextSplitterType = LangChainTextSplitterType.RECURSIVE
     CHUNK_SIZE: int = 1000
     CHUNK_OVERLAP: int = 200
@@ -41,7 +41,7 @@ class AppSettings(BaseSettings):
     OLLAMA_LOCALHOST: str | None = None
 
     # API Keys
-    GEMINI_API_KEY: str = ""
+    PROVIDER_API_KEY: str = ""
 
     # CORS
     ALLOWED_ORIGINS: Union[str, List[str]] = Field(default=["*"])

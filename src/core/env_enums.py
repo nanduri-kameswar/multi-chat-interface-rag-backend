@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class LangChainEmbeddingType(str, Enum):
+class LangChainProviderType(str, Enum):
     OLLAMA_LOCAL = "ollama-local"
     GEMINI = "gemini"
 
