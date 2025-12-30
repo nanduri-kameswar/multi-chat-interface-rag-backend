@@ -9,8 +9,8 @@ from ..schemas.document_chunk_schema import DocumentChunkResponse
 from .routers_deps import DocumentService_Dependency
 
 router = APIRouter(
-    prefix="/document",
-    tags=["document"],
+    prefix="/documents",
+    tags=["documents"],
 )
 
 
@@ -32,21 +32,21 @@ async def upload_pdf(
     )
 
 
-@router.get("/read/{document_id}", response_model=DocumentResponse)
+@router.get("/{document_id}", response_model=DocumentResponse)
 async def get_document(
     document_id: UUID, jwt: CurrentUser_Dependency, service: DocumentService_Dependency
 ):
     return await service.get_document(UUID(jwt.get("user_id")), document_id)
 
 
-@router.get("/user/read-all", response_model=list[DocumentResponse])
+@router.get("/user", response_model=list[DocumentResponse])
 async def get_all_user_documents(
     jwt: CurrentUser_Dependency, service: DocumentService_Dependency
 ):
     return await service.get_all_user_documents(UUID(jwt.get("user_id")))
 
 
-@router.get("/conversation/{conversation_id}", response_model=list[DocumentResponse])
+@router.get("/", response_model=list[DocumentResponse])
 async def get_all_conversation_documents(
     conversation_id: UUID,
     jwt: CurrentUser_Dependency,
@@ -64,16 +64,14 @@ async def delete_document(
     return await service.delete_document(UUID(jwt.get("user_id")), document_id)
 
 
-@router.get(
-    "/chunks/read-all/{document_id}", response_model=list[DocumentChunkResponse]
-)
+@router.get("/{document_id}/chunks", response_model=list[DocumentChunkResponse])
 async def get_all_document_chunks(
     document_id: UUID, jwt: CurrentUser_Dependency, service: DocumentService_Dependency
 ):
     return await service.get_all_document_chunks(UUID(jwt.get("user_id")), document_id)
 
 
-@router.get("/conversation/similar/{text}", response_model=list[DocumentChunkResponse])
+@router.get("/similar-chunks", response_model=list[DocumentChunkResponse])
 async def get_similar_document_chunks(
     text: str,
     convo_id: UUID,

@@ -1,24 +1,20 @@
+import re
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, field_validator, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from src.models.enums import UserRole
 from src.schemas.base_schema import ORMBase
-import re
+
 
 class UserCreate(BaseModel):
-    name: str = Field(
-        ...,
-        min_length=2,
-        max_length=50,
-        description="User full name"
-    )
+    name: str = Field(..., min_length=2, max_length=50, description="User full name")
     email: EmailStr
     password: str = Field(
         ...,
         min_length=8,
         max_length=64,
-        description="Password must contain upper, lower, digit, and special char"
+        description="Password must contain upper, lower, digit, and special char",
     )
 
     @field_validator("name")
