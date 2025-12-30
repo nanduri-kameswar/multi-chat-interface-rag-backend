@@ -37,9 +37,9 @@ class UserService:
     async def get_user_by_id(self, user_id: uuid.UUID) -> User:
         return await self.repo.get_user_by_id(user_id)
 
-    async def register_user(self, email: str, password: str) -> User:
+    async def register_user(self, name:str, email: str, password: str) -> User:
         hashed_password = create_hashed_password(password)
-        user = User(email=email, password_hash=hashed_password)
+        user = User(name=name, email=email, password_hash=hashed_password)
         return await self.repo.create_user(user)
 
     async def authenticate_user(self, email: str, password: str) -> User:
