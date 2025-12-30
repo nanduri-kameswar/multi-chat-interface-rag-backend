@@ -22,9 +22,9 @@ async def create_message(
 
 @router.get("/", response_model=list[MessageResponse])
 async def get_recent_k_conversation_messages(
-    convo_id: uuid.UUID,
-    k: int,
+    conversation_id: uuid.UUID,
+    limit: int | None,
     jwt: CurrentUser_Dependency,
     service: MessageService_Dependency,
 ) -> list[MessageResponse]:
-    return await service.get_recent_k_conversation_messages(convo_id, k)
+    return await service.get_recent_k_conversation_messages(conversation_id, limit)
