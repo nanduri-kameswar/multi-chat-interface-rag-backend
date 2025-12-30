@@ -16,7 +16,7 @@ async def create_message(
     payload: MessageCreate,
     jwt: CurrentUser_Dependency,
     service: MessageService_Dependency,
-) -> Message:
+) -> MessageResponse:
     return await service.create_message(payload)
 
 
@@ -26,5 +26,5 @@ async def get_recent_k_conversation_messages(
     k: int,
     jwt: CurrentUser_Dependency,
     service: MessageService_Dependency,
-) -> list[Message]:
+) -> list[MessageResponse]:
     return await service.get_recent_k_conversation_messages(convo_id, k)
