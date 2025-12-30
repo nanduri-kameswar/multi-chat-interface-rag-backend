@@ -20,10 +20,11 @@ async def create_message(
     return await service.create_message(payload)
 
 
-@router.get("/read-all", response_model=list[MessageResponse])
-async def get_all_conversation_messages(
+@router.get("/read/{k}", response_model=list[MessageResponse])
+async def get_recent_k_conversation_messages(
     convo_id: uuid.UUID,
+    k: int,
     jwt: CurrentUser_Dependency,
     service: MessageService_Dependency,
 ) -> list[Message]:
-    return await service.get_all_conversation_messages(convo_id)
+    return await service.get_recent_k_conversation_messages(convo_id, k)

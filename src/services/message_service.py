@@ -19,5 +19,7 @@ class MessageService:
         )
         return await self.repo.create_message(message)
 
-    async def get_all_conversation_messages(self, convo_id: uuid.UUID) -> list[Message]:
-        return await self.repo.get_all_conversation_messages(convo_id)
+    async def get_recent_k_conversation_messages(
+        self, convo_id: uuid.UUID, k: int
+    ) -> list[Message]:
+        return await self.repo.get_recent_k_conversation_messages(convo_id, k)

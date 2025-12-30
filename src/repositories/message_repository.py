@@ -23,11 +23,14 @@ class MessageRepository:
         await self.db.refresh(message)
         return message
 
-    async def get_all_conversation_messages(self, convo_id: uuid.UUID) -> list[Message]:
+    async def get_recent_k_conversation_messages(
+        self, convo_id: uuid.UUID, k: int = 5
+    ) -> list[Message]:
         result = await self.db.execute(
             select(Message)
             .filter(Message.conversation_id == convo_id)
-            .order_by(Message.created_at)
+            .order_by(Message.created_at.desc())
+            .limit(k)
         )
         messages: list[Message] = result.scalars().all()
         return messages
