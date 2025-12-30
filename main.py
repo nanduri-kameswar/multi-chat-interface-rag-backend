@@ -50,4 +50,4 @@ app.include_router(llm_router.router)
 # home routers
 @app.get("/")
 def main():
-    return {"message": "Hello World"}
+    return {"status": "healthy"}
