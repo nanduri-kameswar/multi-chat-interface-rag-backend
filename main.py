@@ -9,6 +9,7 @@ from src.db.connection import init_vector_store
 from src.routers import (
     conversation_router,
     document_router,
+    llm_router,
     message_router,
     user_router,
 )
@@ -43,6 +44,7 @@ app.include_router(user_router.router)
 app.include_router(conversation_router.router)
 app.include_router(message_router.router)
 app.include_router(document_router.router)
+app.include_router(llm_router.router)
 
 
 # home routers

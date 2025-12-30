@@ -5,6 +5,7 @@ from fastapi import Depends
 from src.db.db_deps import AsyncDb_Dependency, PGVectorStore_Dependency
 from src.services.conversation_service import ConversationService
 from src.services.document_service import DocumentService
+from src.services.llm_service import LLMService
 from src.services.message_service import MessageService
 from src.services.user_service import UserService
 
@@ -51,3 +52,11 @@ def get_document_service(
 DocumentService_Dependency: TypeAlias = Annotated[
     DocumentService, Depends(get_document_service)
 ]
+
+
+# llm service dependency
+def get_llm_service(vector_store: PGVectorStore_Dependency) -> LLMService:
+    return LLMService(vector_store)
+
+
+LLMService_Dependency: TypeAlias = Annotated[LLMService, Depends(get_llm_service)]
