@@ -27,12 +27,15 @@ class MessageService:
     async def get_recent_k_conversation_messages(
         self, convo_id: uuid.UUID, k: int = 5
     ) -> list[MessageResponse]:
-        db_messages: list[Message] = await self.repo.get_recent_k_conversation_messages(convo_id, k)
+        db_messages: list[Message] = await self.repo.get_recent_k_conversation_messages(
+            convo_id, k
+        )
         messages: list[MessageResponse] = [
             MessageResponse(
                 role=msg.role,
                 content=msg.content,
                 created_at=msg.created_at,
-            ) for msg in db_messages
+            )
+            for msg in db_messages
         ]
         return messages
