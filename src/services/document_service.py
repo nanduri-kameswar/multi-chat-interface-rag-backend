@@ -10,7 +10,10 @@ from src.core.exceptions.exceptions import NotFoundError, ProcessingFailedError
 from src.models.document_chunk_model import DocumentChunk
 from src.models.document_model import Document as UserDocument
 from src.models.enums import DocumentStatus
-from src.repositories.document_chunk_repository import DocumentChunkRepository
+from src.repositories.document_chunk_repository import (
+    DocumentChunkDatabaseRepository,
+    DocumentChunkVectorStoreRepository,
+)
 from src.repositories.document_repository import DocumentRepository
 from src.schemas.document_chunk_schema import DocumentChunkResponse
 from src.services.conversation_service import ConversationService
@@ -22,7 +25,8 @@ from src.utilities.text_splitter_utility import get_text_splitter
 class DocumentService:
     def __init__(self, db: AsyncSession, vector_store: PGVectorStore):
         self.repo = DocumentRepository(db)
-        self.chunk_repo = DocumentChunkRepository(db, vector_store)
+        self.chunk_repo = DocumentChunkDatabaseRepository(db)
+        self.chunk_vector_store = DocumentChunkVectorStoreRepository(vector_store)
         self.conversation_service = ConversationService(db)
         self.splitter = get_text_splitter()
         self.batch_size = 32
@@ -64,11 +68,13 @@ class DocumentService:
         return await self.repo.get_document(user_id, doc_id)
 
     async def get_all_conversation_documents(
-        self, user_id: uuid.UUID, convo_id: uuid.UUID
-    ) -> list[UserDocument]:
+        self, user_id: uuid.UUID, convo_id: uuid.UUID, only_doc_ids: bool = False
+    ) -> list[UserDocument] | list[uuid.UUID]:
         documents: list[UserDocument] = await self.repo.get_all_conversation_documents(
             user_id, convo_id
         )
+        if only_doc_ids:
+            return [doc.id for doc in documents]
         return documents
 
     async def get_all_user_documents(self, user_id: uuid.UUID) -> list[UserDocument]:
@@ -112,7 +118,7 @@ class DocumentService:
             chunked_docs_with_metadata[i : i + self.batch_size]
             for i in range(0, len(chunked_docs_with_metadata), self.batch_size)
         ]
-        tasks = [self.chunk_repo.add_documents(batch) for batch in batches]
+        tasks = [self.chunk_vector_store.add_documents(batch) for batch in batches]
         try:
             await asyncio.gather(*tasks)
             await self.repo.modify_document_status(
@@ -129,11 +135,9 @@ class DocumentService:
     """
 
     async def get_similar_document_chunks(
-        self, text: str, user_id: uuid.UUID, convo_id: uuid.UUID, document_id: uuid.UUID
+        self, text: str, document_ids: list[uuid.UUID]
     ) -> list[DocumentChunkResponse]:
-        docs = await self.chunk_repo.similarity_search(
-            text, user_id, convo_id, document_id
-        )
+        docs = await self.chunk_vector_store.similarity_search(text, document_ids)
         doc_response = [
             DocumentChunkResponse(
                 id=uuid.UUID(doc.id),

@@ -73,14 +73,15 @@ async def get_all_document_chunks(
     return await service.get_all_document_chunks(UUID(jwt.get("user_id")), document_id)
 
 
-@router.get("/chunks/similar/{text}", response_model=list[DocumentChunkResponse])
+@router.get("/conversation/similar/{text}", response_model=list[DocumentChunkResponse])
 async def get_similar_document_chunks(
     text: str,
     convo_id: UUID,
-    document_id: UUID,
     jwt: CurrentUser_Dependency,
     service: DocumentService_Dependency,
 ):
-    return await service.get_similar_document_chunks(
-        text, UUID(jwt.get("user_id")), convo_id, document_id
+    user_id: UUID = UUID(jwt.get("user_id"))
+    document_ids = await service.get_all_conversation_documents(
+        user_id, convo_id, only_doc_ids=True
     )
+    return await service.get_similar_document_chunks(text, document_ids)
