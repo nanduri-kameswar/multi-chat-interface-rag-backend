@@ -19,6 +19,7 @@ class MessageService:
         )
         db_message = await self.repo.create_message(message)
         return MessageResponse(
+            id=db_message.id,
             role=db_message.role,
             content=db_message.content,
             created_at=db_message.created_at,
@@ -32,6 +33,7 @@ class MessageService:
         )
         messages: list[MessageResponse] = [
             MessageResponse(
+                id=msg.id,
                 role=msg.role,
                 content=msg.content,
                 created_at=msg.created_at,

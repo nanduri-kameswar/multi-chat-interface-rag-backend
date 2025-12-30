@@ -14,6 +14,7 @@ class MessageCreate(BaseModel):
 
 
 class MessageResponse(ORMBase):
+    id: uuid.UUID
     role: str
     content: str
     created_at: datetime
