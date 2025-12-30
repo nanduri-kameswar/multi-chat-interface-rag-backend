@@ -1,13 +1,13 @@
 import uuid
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.schemas.base_schema import ORMBase
 
 
 class LLMRequest(BaseModel):
-    query: str
+    query: str = Field(...)
     conversation_id: uuid.UUID
 
 
