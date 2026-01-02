@@ -23,7 +23,7 @@ async def lifespan(app_name: FastAPI):
 
 
 app = FastAPI(
-    prefix=settings.API_PREFIX,
+    root_path=settings.API_PREFIX,
     lifespan=lifespan,
 )
 
