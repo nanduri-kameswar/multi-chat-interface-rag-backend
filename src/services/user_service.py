@@ -68,3 +68,6 @@ class UserService:
 
     async def delete_session(self, session: UserSession):
         await self.session_repo.delete_session(session)
+
+    async def delete_session_by_user_id(self, user_id: uuid.UUID):
+        await self.session_repo.delete_session_by_user_id(user_id)

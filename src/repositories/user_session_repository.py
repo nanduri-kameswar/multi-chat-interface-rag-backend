@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,4 +26,10 @@ class UserSessionRepository:
 
     async def delete_session(self, session: UserSession):
         await self.db.delete(session)
+        await self.db.commit()
+
+    async def delete_session_by_user_id(self, user_id: uuid.UUID):
+        sessions =  (await self.db.execute(select(UserSession).filter(UserSession.user_id == user_id))).scalars().all()
+        for session in sessions:
+            await self.db.delete(session)
         await self.db.commit()

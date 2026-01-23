@@ -53,6 +53,8 @@ async def login_user(
     access_token: str = user_service.create_jwt_token(access_payload)
     refresh_token: str = user_service.create_jwt_token(refresh_payload)
 
+    await session_service.delete_session_by_user_id(user.id)
+
     await session_service.create_session(user.id, refresh_token)
 
     response.set_cookie(
@@ -112,7 +114,7 @@ async def refresh(
     new_access_token: str = user_service.create_jwt_token(access_payload)
     new_refresh_token: str = user_service.create_jwt_token(refresh_payload)
 
-    await session_service.delete_session(session)
+    await session_service.delete_session_by_user_id(user.id)
 
     await session_service.create_session(user.id, new_refresh_token)
 
